@@ -12,7 +12,7 @@ const DensityCalculator = () => {
   
   const MASS = 1000; // constant mass in grams
   const MAX_VOLUME = 1000; // maximum bottle capacity in ml
-  const BEAKER_HEIGHT = 320; // beaker height in pixels
+  const BEAKER_HEIGHT = 300; // beaker height in pixels
 
   useEffect(() => {
     // Calculate volume: V = m / ρ
@@ -53,7 +53,7 @@ const DensityCalculator = () => {
 
         <div className="grid md:grid-cols-2 gap-8 bg-white rounded-2xl shadow-xl p-8">
           {/* Left Side - Beaker Visualization */}
-          <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="flex flex-col items-center justify-center space-y-6">
             <div className="flex items-center gap-2 mb-4">
               <Beaker className="w-6 h-6 text-gray-600" />
               <h2 className="text-2xl font-semibold text-gray-700">
@@ -61,69 +61,62 @@ const DensityCalculator = () => {
               </h2>
             </div>
             
-            <div className="relative">
-              {/* Background for better contrast */}
-              <div 
-                className="absolute -inset-4 bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg"
-                style={{ 
-                  width: '220px', 
-                  height: `${BEAKER_HEIGHT + 40}px`
-                }}
-              />
-              
-              {/* Beaker Body */}
-              <div 
-                className="relative bg-gradient-to-b from-gray-50 to-white border-4 border-gray-400 shadow-inner"
-                style={{ 
-                  width: '160px', 
-                  height: `${BEAKER_HEIGHT}px`,
-                  clipPath: 'polygon(15% 0%, 85% 0%, 90% 100%, 10% 100%)',
-                  backgroundColor: '#f8f9fa'
-                }}
-              >
-                {/* Liquid */}
-                <div
-                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-700 via-blue-500 to-blue-400 transition-all duration-700 ease-out"
-                  style={{ 
-                    height: `${liquidHeight}%`,
-                    clipPath: 'polygon(15% 0%, 85% 0%, 90% 100%, 10% 100%)',
-                    opacity: 0.9
-                  }}
-                >
-                  {/* Liquid surface with meniscus effect */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-blue-300 opacity-80" />
-                  {/* Light reflection on liquid */}
-                  <div 
-                    className="absolute top-2 left-6 w-8 h-12 bg-white opacity-25 rounded-full blur-sm"
-                  />
-                </div>
-
-                {/* Volume measurement marks */}
-                <div className="absolute left-0 top-0 w-full h-full pointer-events-none">
-                  {[100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].map((mark) => {
-                    const position = (mark / MAX_VOLUME) * 85; // 85% to match liquid max height
-                    return (
-                      <div
-                        key={mark}
-                        className="absolute flex items-center"
-                        style={{ 
-                          bottom: `${position}%`,
-                          left: '-6px',
-                          transform: 'translateY(0.5px)'
-                        }}
-                      >
-                        <div className="w-12 h-1 bg-gray-700 rounded-full" />
-                        <span className="text-sm font-bold text-gray-800 ml-3 bg-white px-2 py-1 rounded-md shadow-sm border-2 border-gray-300">
-                          {mark}ml
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+            <div className="relative flex items-center">
+              {/* Volume markings on the left */}
+              <div className="flex flex-col-reverse mr-4 space-y-reverse">
+                {[100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].map((mark) => {
+                  const position = (mark / MAX_VOLUME) * 85; // 85% to match liquid max height
+                  return (
+                    <div
+                      key={mark}
+                      className="flex items-center justify-end"
+                      style={{ 
+                        height: `${BEAKER_HEIGHT * 0.85 / 10}px`,
+                        marginBottom: position === 10 ? '0' : `${(BEAKER_HEIGHT * 0.85 / 10) - (BEAKER_HEIGHT * 0.85 / 10)}px`
+                      }}
+                    >
+                      <span className="text-sm font-medium text-gray-700 mr-2">
+                        {mark}ml
+                      </span>
+                      <div className="w-3 h-0.5 bg-gray-700" />
+                    </div>
+                  );
+                })}
               </div>
 
-              {/* Beaker Base/Foot */}
-              <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-3 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full shadow-lg border border-gray-600" />
+              {/* Beaker container with background */}
+              <div className="relative bg-gray-50 rounded-lg p-6 shadow-lg">
+                {/* Laboratory beaker shape */}
+                <div 
+                  className="relative bg-transparent border-4 border-gray-700 shadow-inner"
+                  style={{ 
+                    width: '140px', 
+                    height: `${BEAKER_HEIGHT}px`,
+                    clipPath: 'polygon(20% 0%, 80% 0%, 85% 100%, 15% 100%)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  {/* Blue liquid inside beaker */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-700 via-blue-500 to-blue-400 transition-all duration-700 ease-out"
+                    style={{ 
+                      height: `${liquidHeight}%`,
+                      clipPath: 'polygon(20% 0%, 80% 0%, 85% 100%, 15% 100%)',
+                      opacity: 0.9
+                    }}
+                  >
+                    {/* Liquid surface effect */}
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-blue-300 opacity-60" />
+                    {/* Light reflection on liquid */}
+                    <div 
+                      className="absolute top-3 left-6 w-6 h-8 bg-white opacity-20 rounded-full blur-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Beaker base */}
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-2 bg-gradient-to-b from-gray-600 to-gray-700 rounded-full shadow-md" />
+              </div>
             </div>
 
             {/* Volume Display */}
