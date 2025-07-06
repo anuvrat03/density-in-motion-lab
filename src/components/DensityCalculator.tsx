@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { RotateCcw, Beaker } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,15 +12,15 @@ const DensityCalculator = () => {
   
   const MASS = 1000; // constant mass in grams
   const MAX_VOLUME = 1000; // maximum bottle capacity in ml
-  const BOTTLE_HEIGHT = 300; // bottle height in pixels
+  const BEAKER_HEIGHT = 320; // beaker height in pixels
 
   useEffect(() => {
     // Calculate volume: V = m / ρ
     const newVolume = MASS / density;
     setVolume(newVolume);
     
-    // Calculate liquid height as percentage of bottle
-    const heightPercentage = Math.min((newVolume / MAX_VOLUME) * 100, 100);
+    // Calculate liquid height as percentage of beaker (leaving space at top)
+    const heightPercentage = Math.min((newVolume / MAX_VOLUME) * 85, 85); // 85% max to show open top
     setLiquidHeight(heightPercentage);
   }, [density]);
 
@@ -63,51 +62,58 @@ const DensityCalculator = () => {
             </div>
             
             <div className="relative">
+              {/* Background for better contrast */}
+              <div 
+                className="absolute -inset-4 bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg"
+                style={{ 
+                  width: '220px', 
+                  height: `${BEAKER_HEIGHT + 40}px`
+                }}
+              />
+              
               {/* Beaker Body */}
               <div 
-                className="relative bg-gradient-to-b from-gray-50 to-gray-100 border-4 border-gray-400 rounded-b-2xl shadow-inner"
+                className="relative bg-gradient-to-b from-gray-50 to-white border-4 border-gray-400 shadow-inner"
                 style={{ 
-                  width: '180px', 
-                  height: `${BOTTLE_HEIGHT}px`,
-                  clipPath: 'polygon(10% 0%, 90% 0%, 95% 100%, 5% 100%)'
+                  width: '160px', 
+                  height: `${BEAKER_HEIGHT}px`,
+                  clipPath: 'polygon(15% 0%, 85% 0%, 90% 100%, 10% 100%)',
+                  backgroundColor: '#f8f9fa'
                 }}
               >
                 {/* Liquid */}
                 <div
-                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-700 via-blue-500 to-blue-400 transition-all duration-700 ease-out shadow-lg"
+                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-700 via-blue-500 to-blue-400 transition-all duration-700 ease-out"
                   style={{ 
                     height: `${liquidHeight}%`,
-                    clipPath: 'polygon(10% 0%, 90% 0%, 95% 100%, 5% 100%)',
-                    opacity: 0.85
+                    clipPath: 'polygon(15% 0%, 85% 0%, 90% 100%, 10% 100%)',
+                    opacity: 0.9
                   }}
                 >
                   {/* Liquid surface with meniscus effect */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-blue-300 opacity-80 rounded-full" />
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-blue-300 opacity-80" />
                   {/* Light reflection on liquid */}
                   <div 
-                    className="absolute top-2 left-4 w-6 h-8 bg-white opacity-20 rounded-full blur-sm"
-                    style={{ 
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%)'
-                    }}
+                    className="absolute top-2 left-6 w-8 h-12 bg-white opacity-25 rounded-full blur-sm"
                   />
                 </div>
 
                 {/* Volume measurement marks */}
                 <div className="absolute left-0 top-0 w-full h-full pointer-events-none">
                   {[100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].map((mark) => {
-                    const position = (mark / MAX_VOLUME) * 100;
+                    const position = (mark / MAX_VOLUME) * 85; // 85% to match liquid max height
                     return (
                       <div
                         key={mark}
                         className="absolute flex items-center"
                         style={{ 
                           bottom: `${position}%`,
-                          left: '-2px',
+                          left: '-6px',
                           transform: 'translateY(0.5px)'
                         }}
                       >
-                        <div className="w-8 h-0.5 bg-gray-600" />
-                        <span className="text-xs font-medium text-gray-700 ml-2 bg-white px-1 py-0.5 rounded shadow-sm border">
+                        <div className="w-12 h-1 bg-gray-700 rounded-full" />
+                        <span className="text-sm font-bold text-gray-800 ml-3 bg-white px-2 py-1 rounded-md shadow-sm border-2 border-gray-300">
                           {mark}ml
                         </span>
                       </div>
@@ -116,28 +122,12 @@ const DensityCalculator = () => {
                 </div>
               </div>
 
-              {/* Beaker Rim/Spout */}
-              <div className="absolute -top-6 left-0 right-0 flex justify-center">
-                <div 
-                  className="h-6 bg-gradient-to-b from-gray-300 to-gray-400 border-2 border-gray-500 rounded-t-lg shadow-md"
-                  style={{ 
-                    width: '160px',
-                    borderBottom: 'none'
-                  }}
-                />
-                {/* Spout */}
-                <div 
-                  className="absolute -right-2 top-1 w-8 h-4 bg-gradient-to-r from-gray-300 to-gray-400 border-2 border-gray-500 rounded-r-full"
-                  style={{ borderLeft: 'none' }}
-                />
-              </div>
-
-              {/* Base stand */}
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-2 bg-gray-400 rounded-full shadow-lg" />
+              {/* Beaker Base/Foot */}
+              <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-3 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full shadow-lg border border-gray-600" />
             </div>
 
             {/* Volume Display */}
-            <div className="text-center bg-blue-50 rounded-xl p-4 w-full max-w-xs shadow-inner border border-blue-200">
+            <div className="text-center bg-blue-50 rounded-xl p-4 w-full max-w-xs shadow-inner border-2 border-blue-200">
               <div className="text-sm font-medium text-gray-600 mb-1">Current Volume</div>
               <div className="text-3xl font-bold text-blue-600">
                 {volume.toFixed(1)} ml
