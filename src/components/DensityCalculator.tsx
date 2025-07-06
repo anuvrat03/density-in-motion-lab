@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Beaker } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -53,66 +53,98 @@ const DensityCalculator = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 bg-white rounded-2xl shadow-xl p-8">
-          {/* Left Side - Bottle Visualization */}
+          {/* Left Side - Beaker Visualization */}
           <div className="flex flex-col items-center justify-center space-y-4">
-            <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-              Laboratory Beaker
-            </h2>
+            <div className="flex items-center gap-2 mb-4">
+              <Beaker className="w-6 h-6 text-gray-600" />
+              <h2 className="text-2xl font-semibold text-gray-700">
+                Laboratory Beaker
+              </h2>
+            </div>
             
             <div className="relative">
-              {/* Bottle Container */}
+              {/* Beaker Body */}
               <div 
-                className="relative border-4 border-gray-400 rounded-b-3xl bg-transparent"
+                className="relative bg-gradient-to-b from-gray-50 to-gray-100 border-4 border-gray-400 rounded-b-2xl shadow-inner"
                 style={{ 
-                  width: '200px', 
+                  width: '180px', 
                   height: `${BOTTLE_HEIGHT}px`,
-                  borderTop: 'none'
+                  clipPath: 'polygon(10% 0%, 90% 0%, 95% 100%, 5% 100%)'
                 }}
               >
-                {/* Measurement marks */}
-                <div className="absolute left-0 top-0 w-full h-full">
-                  {[100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].map((mark, index) => (
-                    <div
-                      key={mark}
-                      className="absolute left-0 w-6 border-t border-gray-400 flex items-center"
-                      style={{ 
-                        bottom: `${(mark / MAX_VOLUME) * 100}%`,
-                        transform: 'translateY(1px)'
-                      }}
-                    >
-                      <span className="text-xs text-gray-600 ml-8 bg-white px-1">
-                        {mark}ml
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
                 {/* Liquid */}
                 <div
-                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-600 to-blue-400 rounded-b-3xl transition-all duration-700 ease-out"
+                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-700 via-blue-500 to-blue-400 transition-all duration-700 ease-out shadow-lg"
                   style={{ 
                     height: `${liquidHeight}%`,
-                    opacity: 0.8
+                    clipPath: 'polygon(10% 0%, 90% 0%, 95% 100%, 5% 100%)',
+                    opacity: 0.85
                   }}
                 >
-                  {/* Liquid surface effect */}
-                  <div className="absolute top-0 left-0 right-0 h-2 bg-blue-300 opacity-60 animate-pulse" />
+                  {/* Liquid surface with meniscus effect */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-blue-300 opacity-80 rounded-full" />
+                  {/* Light reflection on liquid */}
+                  <div 
+                    className="absolute top-2 left-4 w-6 h-8 bg-white opacity-20 rounded-full blur-sm"
+                    style={{ 
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%)'
+                    }}
+                  />
                 </div>
 
-                {/* Bottle rim */}
-                <div className="absolute -top-4 left-0 right-0 h-4 border-4 border-gray-400 border-b-0 bg-gray-100 rounded-t-lg" />
+                {/* Volume measurement marks */}
+                <div className="absolute left-0 top-0 w-full h-full pointer-events-none">
+                  {[100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].map((mark) => {
+                    const position = (mark / MAX_VOLUME) * 100;
+                    return (
+                      <div
+                        key={mark}
+                        className="absolute flex items-center"
+                        style={{ 
+                          bottom: `${position}%`,
+                          left: '-2px',
+                          transform: 'translateY(0.5px)'
+                        }}
+                      >
+                        <div className="w-8 h-0.5 bg-gray-600" />
+                        <span className="text-xs font-medium text-gray-700 ml-2 bg-white px-1 py-0.5 rounded shadow-sm border">
+                          {mark}ml
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* Beaker Rim/Spout */}
+              <div className="absolute -top-6 left-0 right-0 flex justify-center">
+                <div 
+                  className="h-6 bg-gradient-to-b from-gray-300 to-gray-400 border-2 border-gray-500 rounded-t-lg shadow-md"
+                  style={{ 
+                    width: '160px',
+                    borderBottom: 'none'
+                  }}
+                />
+                {/* Spout */}
+                <div 
+                  className="absolute -right-2 top-1 w-8 h-4 bg-gradient-to-r from-gray-300 to-gray-400 border-2 border-gray-500 rounded-r-full"
+                  style={{ borderLeft: 'none' }}
+                />
+              </div>
+
+              {/* Base stand */}
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-2 bg-gray-400 rounded-full shadow-lg" />
             </div>
 
             {/* Volume Display */}
-            <div className="text-center bg-blue-50 rounded-lg p-4 w-full max-w-xs">
-              <div className="text-sm text-gray-600 mb-1">Current Volume</div>
+            <div className="text-center bg-blue-50 rounded-xl p-4 w-full max-w-xs shadow-inner border border-blue-200">
+              <div className="text-sm font-medium text-gray-600 mb-1">Current Volume</div>
               <div className="text-3xl font-bold text-blue-600">
                 {volume.toFixed(1)} ml
               </div>
               {volume > MAX_VOLUME && (
-                <div className="text-sm text-red-500 mt-1">
-                  ⚠️ Volume exceeds bottle capacity!
+                <div className="text-sm text-red-500 mt-2 flex items-center justify-center gap-1">
+                  ⚠️ Volume exceeds beaker capacity!
                 </div>
               )}
             </div>
